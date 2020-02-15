@@ -1,22 +1,4 @@
-//: ## Initial and Terminal objects
-/*:
- Initial object in Category of Types: `Never`.
- 
- Definition of unique morphism from `Never` to any other type:
- 
- `Never -> A`
-*/
-func absurd<A>(_ never: Never) -> A {
-  switch never {}
-}
-/*:
- Terminal object in Category of Types: `Void`.
- 
- Definition of unique morphism from any other type to `Void`:
-*/
-func singleton<A>(_: A) -> Void {
-  ()
-}
+//: ## Isomorphisms
 
 //: Definition of morphisms `multiply` and `divide` in Category of `Double`s
 func multiply(_ y: Double) -> (Double) -> Double {
@@ -60,33 +42,3 @@ let initial2: (UInt8, Bit) = (0, .zero)
 
 let terminal1: (Bit, UInt8) = (.one, 255)
 let terminal2: (UInt8, Bit) = (255, .one)
-
-
-struct NonEmpty {
-  var head: String
-  var tail: [String]
-  
-  var arrayValue: [String] {
-    [head] + tail
-  }
-  
-  subscript(index: Int) -> String {
-    get {
-      index == 0 ? head : tail[index - 1]
-    }
-    
-    set {
-      if index == 0 {
-        head = newValue
-      }  else {
-        tail[index - 1] = newValue
-      }
-    }
-  }
-}
-
-let strings: [String] = []
-var nonEmptyStrings = NonEmpty(head: "Hello", tail: ["World"])
-nonEmptyStrings.arrayValue
-nonEmptyStrings[0] = "Goodbye"
-nonEmptyStrings.arrayValue
