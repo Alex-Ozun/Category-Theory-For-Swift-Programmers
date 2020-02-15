@@ -1,33 +1,24 @@
-//: ## Category of Types
+//: ## Initial and Terminal objects
 /*:
-`Initial` object in a category of types - `Never`.
+ Initial object in Category of Types: `Never`.
  
- Unique morphism from `Never` to any other type:
+ Definition of unique morphism from `Never` to any other type:
+ 
+ `Never -> A`
 */
 func absurd<A>(_ never: Never) -> A {
   switch never {}
 }
-
 /*:
- `Terminal` object in a category of types - `Void`.
+ Terminal object in Category of Types: `Void`.
  
- Unique morphism from any other type to `Void`:
+ Definition of unique morphism from any other type to `Void`:
 */
 func singleton<A>(_: A) -> Void {
   ()
 }
 
-//: ## Category of sets of `Bit` and `UInt8`
-
-
-let initial1: (Bit, UInt8) = (.zero, 0)
-let initial2: (UInt8, Bit) = (0, .zero)
-
-let terminal1: (Bit, UInt8) = (.one, 255)
-let terminal2: (UInt8, Bit) = (255, .one)
-
-//: ## Isomorphism
-
+//: Definition of morphisms `multiply` and `divide` in Category of `Double`s
 func multiply(_ y: Double) -> (Double) -> Double {
   { x in  x * y }
 }
@@ -35,22 +26,67 @@ func multiply(_ y: Double) -> (Double) -> Double {
 func divide(_ y: Double) -> (Double) -> Double {
   { x in x / y }
 }
-
-//: Define two morphisms
+//: Definition of two isomorphic morphisms
 let multiplyByThree = multiply(3)
 let divideByThree = divide(3)
-
-//: Prove that `multiplyByThree` and `divideByThree` are isomorphic
+/*:
+ Requirement for two morphisms to be isomorphic:
+ 
+ `g ◦ f == id`
+ 
+ `f ◦ g == id`
+ 
+ Proof that `multiplyByThree` and `divideByThree` are isomorphic
+ */
 let val: Double = 42
 (val |> multiplyByThree ◦ divideByThree) == ( val |> identity)
 (val |> divideByThree ◦ multiplyByThree) == ( val |> identity)
-
-//: Define morphism `swap` for Category of Cartesian Products.
+//: Definition of morphism `swap` for Category of Cartesian Products.
 func swap<A, B>(_ x: (A, B)) -> (B, A) {
   (x.1, x.0)
 }
+//: Proof that `swap` is an Isomorphism
 
-let pair: (Bit, UInt8) = (.zero, 42)
-
-//: Prove that `swap` is an Isomorphism
+let pair: (Bool, Int) = (true, 42)
 (pair |> swap ◦ swap) == (pair |> identity)
+
+/*:
+`Initial` object in a Category of Cartesian Products `(A 𝘅 B)` and `(B 𝘅 A)`.
+*/
+let initial1: (Bit, UInt8) = (.zero, 0)
+let initial2: (UInt8, Bit) = (0, .zero)
+
+//: Proof that `initial1` and `initial2` are unique up to unique isomorphism
+
+let terminal1: (Bit, UInt8) = (.one, 255)
+let terminal2: (UInt8, Bit) = (255, .one)
+
+
+struct NonEmpty {
+  var head: String
+  var tail: [String]
+  
+  var arrayValue: [String] {
+    [head] + tail
+  }
+  
+  subscript(index: Int) -> String {
+    get {
+      index == 0 ? head : tail[index - 1]
+    }
+    
+    set {
+      if index == 0 {
+        head = newValue
+      }  else {
+        tail[index - 1] = newValue
+      }
+    }
+  }
+}
+
+let strings: [String] = []
+var nonEmptyStrings = NonEmpty(head: "Hello", tail: ["World"])
+nonEmptyStrings.arrayValue
+nonEmptyStrings[0] = "Goodbye"
+nonEmptyStrings.arrayValue
